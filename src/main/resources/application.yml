@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    url: /api-specs/market-api-spec.yml

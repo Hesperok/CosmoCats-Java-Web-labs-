@@ -1,0 +1,300 @@
+openapi: 3.0.3
+info:
+  title: Cosmo Cats Marketplace API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /api/v1/products:
+    get:
+      tags: [Products]
+      operationId: listProducts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponseDto"
+    post:
+      tags: [Products]
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductUpsertRequestDto"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponseDto"
+        "400":
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Category not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /api/v1/products/{id}:
+    get:
+      tags: [Products]
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponseDto"
+        "404":
+          description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+    put:
+      tags: [Products]
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductUpsertRequestDto"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponseDto"
+        "400":
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Not found (product or category)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+    delete:
+      tags: [Products]
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: No Content
+
+  /api/v1/categories:
+    get:
+      tags: [Categories]
+      operationId: listCategories
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryListResponseDto"
+
+    post:
+      tags: [Categories]
+      operationId: createCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryCreateRequestDto"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponseDto"
+        "400":
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+
+  /api/v1/categories/{id}:
+    delete:
+      tags: [Categories]
+      operationId: deleteCategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: No Content
+
+components:
+  schemas:
+    ProductUpsertRequestDto:
+      type: object
+      required: [name, price, categoryId, available]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 80
+          description: "Must contain a cosmic term (validated by @CosmicWordCheck), e.g. star/galaxy/comet/nebula/cosmic."
+          example: "Galaxy Milk"
+        description:
+          type: string
+          maxLength: 500
+          example: "Fresh milk from the Andromeda sector."
+        price:
+          type: number
+          format: double
+          minimum: 0.01
+          example: 19.99
+        categoryId:
+          type: string
+          format: uuid
+          example: "0a1b2c3d-4e5f-6789-abcd-ef0123456789"
+        available:
+          type: boolean
+          example: true
+
+    ProductResponseDto:
+      type: object
+      required: [id, name, price, categoryId, categoryName, available]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+        categoryId:
+          type: string
+          format: uuid
+        categoryName:
+          type: string
+          example: "Space Food"
+        available:
+          type: boolean
+
+    ProductListResponseDto:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductResponseDto"
+
+    CategoryCreateRequestDto:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 60
+          example: "Space Food"
+
+    CategoryResponseDto:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    CategoryListResponseDto:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryResponseDto"
+
+    FieldViolation:
+      type: object
+      required: [field, message]
+      properties:
+        field:
+          type: string
+          example: "price"
+        message:
+          type: string
+          example: "must be greater than or equal to 0.01"
+
+    ProblemDetail:
+      type: object
+      description: RFC 9457 Problem Details (Spring ProblemDetail + custom properties)
+      properties:
+        type:
+          type: string
+          example: "about:blank"
+        title:
+          type: string
+          example: "Bad Request"
+        status:
+          type: integer
+          example: 400
+        detail:
+          type: string
+          example: "Validation failed"
+        instance:
+          type: string
+          example: "/api/products"
+        path:
+          type: string
+          example: "/api/products"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldViolation"
