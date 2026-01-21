@@ -5,6 +5,8 @@ import jakarta.validation.ConstraintViolationException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.hesper.cosmocatshesper.featuretoggle.exception.FeatureNotAvailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
@@ -24,6 +26,17 @@ public class GlobalExceptionHandler {
         pd.setProperty("path", request.getRequestURI());
         return pd;
     }
+
+    @ExceptionHandler(FeatureNotAvailableException.class)
+    public ProblemDetail handleFeatureNotAvailable(FeatureNotAvailableException ex, HttpServletRequest request) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+        pd.setTitle(HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase());
+        pd.setType(URI.create("about:blank"));
+        pd.setInstance(URI.create(request.getRequestURI()));
+        pd.setProperty("path", request.getRequestURI());
+        return pd;
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpServletRequest request) {

@@ -4,3 +4,12 @@ server:
 springdoc:
   swagger-ui:
     url: /api-specs/market-api-spec.yml
+
+feature:
+  toggles:
+    stellarCatsDirectory:
+      enabled: true
+    quantumMeowTranslator:
+      enabled: false
+    nebulaPromoBanner:
+      enabled: true
