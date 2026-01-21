@@ -23,15 +23,15 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryResponseDto create(@Valid @RequestBody CategoryCreateRequestDto dto) {
+    public CategoryResponseDto createCategory(@Valid @RequestBody CategoryCreateRequestDto dto) {
         Category draft = categoryMapper.mapCreateRequestDtoToCategoryDraft(dto);
-        Category created = categoryService.create(draft);
+        Category created = categoryService.createCategory(draft);
         return categoryMapper.mapCategoryToResponseDto(created);
     }
 
     @GetMapping
-    public CategoryListResponseDto list() {
-        List<CategoryResponseDto> items = categoryService.getAll()
+    public CategoryListResponseDto listCategories() {
+        List<CategoryResponseDto> items = categoryService.getAllCategories()
                 .stream()
                 .map(categoryMapper::mapCategoryToResponseDto)
                 .toList();
@@ -41,7 +41,7 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        categoryService.deleteById(id);
+    public void deleteCategory(@PathVariable UUID id) {
+        categoryService.deleteCategoryById(id);
     }
 }

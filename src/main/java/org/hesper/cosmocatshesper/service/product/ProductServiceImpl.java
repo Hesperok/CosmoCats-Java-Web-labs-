@@ -19,9 +19,9 @@ public class ProductServiceImpl implements ProductService {
     private final ConcurrentHashMap<UUID, Product> storage = new ConcurrentHashMap<>();
 
     @Override
-    public Product create(Product draft) {
+    public Product createProduct(Product draft) {
         UUID categoryId = draft.getCategory().getId();
-        Category category = categoryService.findById(categoryId)
+        Category category = categoryService.findCategoryById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
         UUID id = UUID.randomUUID();
@@ -35,12 +35,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAll() {
+    public List<Product> getAllProducts() {
         return storage.values().stream().toList();
     }
 
     @Override
-    public Product getById(UUID id) {
+    public Product getProductById(UUID id) {
         Product product = storage.get(id);
         if (product == null) {
             throw new ProductNotFoundException(id);
@@ -49,13 +49,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(UUID id, Product draft) {
+    public Product updateProduct(UUID id, Product draft) {
         if (!storage.containsKey(id)) {
             throw new ProductNotFoundException(id);
         }
 
         UUID categoryId = draft.getCategory().getId();
-        Category category = categoryService.findById(categoryId)
+        Category category = categoryService.findCategoryById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
         Product updated = draft.toBuilder()
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteProductById(UUID id) {
         storage.remove(id);
     }
 }

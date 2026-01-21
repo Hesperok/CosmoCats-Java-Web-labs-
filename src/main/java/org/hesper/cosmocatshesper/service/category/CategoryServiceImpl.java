@@ -13,7 +13,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final ConcurrentHashMap<UUID, Category> storage = new ConcurrentHashMap<>();
 
     @Override
-    public Category create(Category draft) {
+    public Category createCategory(Category draft) {
         UUID id = UUID.randomUUID();
         Category created = draft.toBuilder().id(id).build();
         storage.put(id, created);
@@ -21,17 +21,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getAll() {
+    public List<Category> getAllCategories() {
         return storage.values().stream().toList();
     }
 
     @Override
-    public Optional<Category> findById(UUID id) {
+    public Optional<Category> findCategoryById(UUID id) {
         return Optional.ofNullable(storage.get(id));
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteCategoryById(UUID id) {
         storage.remove(id);
     }
 }

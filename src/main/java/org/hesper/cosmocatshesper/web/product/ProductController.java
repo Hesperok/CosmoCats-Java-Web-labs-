@@ -23,15 +23,15 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductResponseDto create(@Valid @RequestBody ProductUpsertRequestDto dto) {
+    public ProductResponseDto createProduct(@Valid @RequestBody ProductUpsertRequestDto dto) {
         Product draft = productMapper.mapUpsertRequestDtoToProductCreateDraft(dto);
-        Product created = productService.create(draft);
+        Product created = productService.createProduct(draft);
         return productMapper.mapProductToResponseDto(created);
     }
 
     @GetMapping
-    public ProductListResponseDto list() {
-        List<ProductResponseDto> items = productService.getAll()
+    public ProductListResponseDto listProducts() {
+        List<ProductResponseDto> items = productService.getAllProducts()
                 .stream()
                 .map(productMapper::mapProductToResponseDto)
                 .toList();
@@ -40,21 +40,21 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductResponseDto getById(@PathVariable UUID id) {
-        Product product = productService.getById(id);
+    public ProductResponseDto getProductById(@PathVariable UUID id) {
+        Product product = productService.getProductById(id);
         return productMapper.mapProductToResponseDto(product);
     }
 
     @PutMapping("/{id}")
-    public ProductResponseDto update(@PathVariable UUID id, @Valid @RequestBody ProductUpsertRequestDto dto) {
+    public ProductResponseDto updateProduct(@PathVariable UUID id, @Valid @RequestBody ProductUpsertRequestDto dto) {
         Product draft = productMapper.mapUpsertRequestDtoToProductUpdateDraft(id, dto);
-        Product updated = productService.update(id, draft);
+        Product updated = productService.updateProduct(id, draft);
         return productMapper.mapProductToResponseDto(updated);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        productService.deleteById(id);
+    public void deleteProduct(@PathVariable UUID id) {
+        productService.deleteProductById(id);
     }
 }

@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.hesper.cosmocatshesper.domain.product.Product;
 
 public interface ProductService {
-    Product create(Product draft);
-    List<Product> getAll();
-    Product getById(UUID id);
-    Product update(UUID id, Product draft);
-    void deleteById(UUID id);
+    Product createProduct(Product draft);
+    List<Product> getAllProducts();
+    Product getProductById(UUID id);
+    Product updateProduct(UUID id, Product draft);
+    void deleteProductById(UUID id);
 }
