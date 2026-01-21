@@ -71,4 +71,8 @@ public class ProductServiceImpl implements ProductService {
     public void deleteById(UUID id) {
         storage.remove(id);
     }
+
+    void clearStorage() {
+        storage.clear();
+    }
 }
