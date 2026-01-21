@@ -31,12 +31,12 @@ class CategoryServiceImplTest {
                 .name("Space Food")
                 .build();
 
-        Category created = categoryService.create(draft);
+        Category created = categoryService.createCategory(draft);
 
         assertThat(created.getId()).isNotNull();
         assertThat(created.getName()).isEqualTo("Space Food");
 
-        List<Category> all = categoryService.getAll();
+        List<Category> all = categoryService.getAllCategories();
         assertThat(all).hasSize(1);
 
         Category stored = all.getFirst();
@@ -47,7 +47,7 @@ class CategoryServiceImplTest {
     @Test
     @DisplayName("getAll: should return empty list initially")
     void getAll_shouldReturnEmptyInitially() {
-        List<Category> all = categoryService.getAll();
+        List<Category> all = categoryService.getAllCategories();
         assertThat(all).isEmpty();
     }
 
@@ -55,20 +55,20 @@ class CategoryServiceImplTest {
     @DisplayName("findById: should return Optional.empty when missing")
     void findById_shouldReturnEmptyWhenMissing() {
         UUID missingId = UUID.randomUUID();
-        assertThat(categoryService.findById(missingId)).isEmpty();
+        assertThat(categoryService.findCategoryById(missingId)).isEmpty();
     }
 
     @Test
     @DisplayName("findById: should return category when exists")
     void findById_shouldReturnCategoryWhenExists() {
-        Category created = categoryService.create(Category.builder()
+        Category created = categoryService.createCategory(Category.builder()
                 .name("Toys")
                 .build());
 
         assertThat(created.getId()).isNotNull();
         assertThat(created.getName()).isEqualTo("Toys");
 
-        Category found = categoryService.findById(created.getId()).orElseThrow();
+        Category found = categoryService.findCategoryById(created.getId()).orElseThrow();
 
         assertThat(found.getId()).isEqualTo(created.getId());
         assertThat(found.getName()).isEqualTo("Toys");
@@ -77,26 +77,26 @@ class CategoryServiceImplTest {
     @Test
     @DisplayName("deleteById: should be idempotent and remove existing category")
     void deleteById_shouldBeIdempotent() {
-        Category created = categoryService.create(Category.builder()
+        Category created = categoryService.createCategory(Category.builder()
                 .name("Drinks")
                 .build());
 
-        assertThat(categoryService.findById(created.getId())).isPresent();
+        assertThat(categoryService.findCategoryById(created.getId())).isPresent();
 
-        assertThatCode(() -> categoryService.deleteById(created.getId())).doesNotThrowAnyException();
-        assertThat(categoryService.findById(created.getId())).isEmpty();
+        assertThatCode(() -> categoryService.deleteCategoryById(created.getId())).doesNotThrowAnyException();
+        assertThat(categoryService.findCategoryById(created.getId())).isEmpty();
 
-        assertThatCode(() -> categoryService.deleteById(created.getId())).doesNotThrowAnyException();
-        assertThatCode(() -> categoryService.deleteById(UUID.randomUUID())).doesNotThrowAnyException();
+        assertThatCode(() -> categoryService.deleteCategoryById(created.getId())).doesNotThrowAnyException();
+        assertThatCode(() -> categoryService.deleteCategoryById(UUID.randomUUID())).doesNotThrowAnyException();
     }
 
     @Test
     @DisplayName("getAll: should return multiple categories")
     void getAll_shouldReturnMultipleCategories() {
-        Category c1 = categoryService.create(Category.builder().name("Space Food").build());
-        Category c2 = categoryService.create(Category.builder().name("Cosmic Toys").build());
+        Category c1 = categoryService.createCategory(Category.builder().name("Space Food").build());
+        Category c2 = categoryService.createCategory(Category.builder().name("Cosmic Toys").build());
 
-        List<Category> all = categoryService.getAll();
+        List<Category> all = categoryService.getAllCategories();
         assertThat(all).hasSize(2);
 
         Category stored1 = all.stream()

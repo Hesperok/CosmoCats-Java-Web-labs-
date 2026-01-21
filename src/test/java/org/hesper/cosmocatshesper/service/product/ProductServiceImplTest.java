@@ -45,7 +45,7 @@ class ProductServiceImplTest {
                 .name("Space Food")
                 .build();
 
-        when(categoryService.findById(categoryId)).thenReturn(Optional.of(resolvedCategory));
+        when(categoryService.findCategoryById(categoryId)).thenReturn(Optional.of(resolvedCategory));
 
         Product draft = Product.builder()
                 .name("Galaxy Milk")
@@ -55,7 +55,7 @@ class ProductServiceImplTest {
                 .available(true)
                 .build();
 
-        Product created = productService.create(draft);
+        Product created = productService.createProduct(draft);
 
         assertThat(created.getId()).isNotNull();
         assertThat(created.getName()).isEqualTo("Galaxy Milk");
@@ -67,7 +67,7 @@ class ProductServiceImplTest {
         assertThat(created.getCategory().getId()).isEqualTo(categoryId);
         assertThat(created.getCategory().getName()).isEqualTo("Space Food");
 
-        verify(categoryService, times(1)).findById(categoryId);
+        verify(categoryService, times(1)).findCategoryById(categoryId);
         verifyNoMoreInteractions(categoryService);
     }
 
@@ -75,7 +75,7 @@ class ProductServiceImplTest {
     @DisplayName("create: should throw CategoryNotFoundException when category does not exist")
     void create_shouldThrowCategoryNotFound() {
         UUID categoryId = UUID.randomUUID();
-        when(categoryService.findById(categoryId)).thenReturn(Optional.empty());
+        when(categoryService.findCategoryById(categoryId)).thenReturn(Optional.empty());
 
         Product draft = Product.builder()
                 .name("Galaxy Milk")
@@ -85,11 +85,11 @@ class ProductServiceImplTest {
                 .available(true)
                 .build();
 
-        assertThatThrownBy(() -> productService.create(draft))
+        assertThatThrownBy(() -> productService.createProduct(draft))
                 .isInstanceOf(CategoryNotFoundException.class)
                 .hasMessage(String.format(NotFoundException.ID_NOT_FOUND_TEMPLATE, "Category", categoryId));
 
-        verify(categoryService, times(1)).findById(categoryId);
+        verify(categoryService, times(1)).findCategoryById(categoryId);
         verifyNoMoreInteractions(categoryService);
     }
 
@@ -98,9 +98,9 @@ class ProductServiceImplTest {
     void getAll_shouldReturnAllProducts() {
         UUID categoryId = UUID.randomUUID();
         Category resolvedCategory = Category.builder().id(categoryId).name("Space Food").build();
-        when(categoryService.findById(categoryId)).thenReturn(Optional.of(resolvedCategory));
+        when(categoryService.findCategoryById(categoryId)).thenReturn(Optional.of(resolvedCategory));
 
-        Product created1 = productService.create(Product.builder()
+        Product created1 = productService.createProduct(Product.builder()
                 .name("Galaxy Milk")
                 .description("Milk")
                 .price(new BigDecimal("19.99"))
@@ -108,7 +108,7 @@ class ProductServiceImplTest {
                 .available(true)
                 .build());
 
-        Product created2 = productService.create(Product.builder()
+        Product created2 = productService.createProduct(Product.builder()
                 .name("Star Snack")
                 .description("Snack")
                 .price(new BigDecimal("5.50"))
@@ -116,7 +116,7 @@ class ProductServiceImplTest {
                 .available(false)
                 .build());
 
-        List<Product> all = productService.getAll();
+        List<Product> all = productService.getAllProducts();
 
         assertThat(all).hasSize(2);
 
@@ -148,7 +148,7 @@ class ProductServiceImplTest {
         assertThat(p2.getCategory().getId()).isEqualTo(categoryId);
         assertThat(p2.getCategory().getName()).isEqualTo("Space Food");
 
-        verify(categoryService, times(2)).findById(categoryId);
+        verify(categoryService, times(2)).findCategoryById(categoryId);
         verifyNoMoreInteractions(categoryService);
     }
 
@@ -157,9 +157,9 @@ class ProductServiceImplTest {
     void getById_shouldReturnExistingProduct() {
         UUID categoryId = UUID.randomUUID();
         Category resolvedCategory = Category.builder().id(categoryId).name("Space Food").build();
-        when(categoryService.findById(categoryId)).thenReturn(Optional.of(resolvedCategory));
+        when(categoryService.findCategoryById(categoryId)).thenReturn(Optional.of(resolvedCategory));
 
-        Product created = productService.create(Product.builder()
+        Product created = productService.createProduct(Product.builder()
                 .name("Comet Drink")
                 .description("Drink")
                 .price(new BigDecimal("3.00"))
@@ -167,7 +167,7 @@ class ProductServiceImplTest {
                 .available(true)
                 .build());
 
-        Product found = productService.getById(created.getId());
+        Product found = productService.getProductById(created.getId());
 
         assertThat(found.getId()).isEqualTo(created.getId());
         assertThat(found.getName()).isEqualTo("Comet Drink");
@@ -178,7 +178,7 @@ class ProductServiceImplTest {
         assertThat(found.getCategory().getId()).isEqualTo(categoryId);
         assertThat(found.getCategory().getName()).isEqualTo("Space Food");
 
-        verify(categoryService, times(1)).findById(categoryId);
+        verify(categoryService, times(1)).findCategoryById(categoryId);
         verifyNoMoreInteractions(categoryService);
     }
 
@@ -187,7 +187,7 @@ class ProductServiceImplTest {
     void getById_shouldThrowWhenMissing() {
         UUID missingId = UUID.randomUUID();
 
-        assertThatThrownBy(() -> productService.getById(missingId))
+        assertThatThrownBy(() -> productService.getProductById(missingId))
                 .isInstanceOf(ProductNotFoundException.class)
                 .hasMessage(String.format(NotFoundException.ID_NOT_FOUND_TEMPLATE, "Product", missingId));
 
@@ -199,9 +199,9 @@ class ProductServiceImplTest {
     void update_shouldUpdateExistingProduct() {
         UUID categoryId = UUID.randomUUID();
         Category resolvedCategory = Category.builder().id(categoryId).name("Space Food").build();
-        when(categoryService.findById(categoryId)).thenReturn(Optional.of(resolvedCategory));
+        when(categoryService.findCategoryById(categoryId)).thenReturn(Optional.of(resolvedCategory));
 
-        Product created = productService.create(Product.builder()
+        Product created = productService.createProduct(Product.builder()
                 .name("Old Galaxy Milk")
                 .description("Old")
                 .price(new BigDecimal("1.00"))
@@ -217,7 +217,7 @@ class ProductServiceImplTest {
                 .available(false)
                 .build();
 
-        Product updated = productService.update(created.getId(), updateDraft);
+        Product updated = productService.updateProduct(created.getId(), updateDraft);
 
         assertThat(updated.getId()).isEqualTo(created.getId());
         assertThat(updated.getName()).isEqualTo("New Galaxy Milk");
@@ -228,7 +228,7 @@ class ProductServiceImplTest {
         assertThat(updated.getCategory().getId()).isEqualTo(categoryId);
         assertThat(updated.getCategory().getName()).isEqualTo("Space Food");
 
-        verify(categoryService, times(2)).findById(categoryId);
+        verify(categoryService, times(2)).findCategoryById(categoryId);
         verifyNoMoreInteractions(categoryService);
     }
 
@@ -246,7 +246,7 @@ class ProductServiceImplTest {
                 .available(true)
                 .build();
 
-        assertThatThrownBy(() -> productService.update(missingProductId, updateDraft))
+        assertThatThrownBy(() -> productService.updateProduct(missingProductId, updateDraft))
                 .isInstanceOf(ProductNotFoundException.class)
                 .hasMessage(String.format(NotFoundException.ID_NOT_FOUND_TEMPLATE, "Product", missingProductId));
 
@@ -258,9 +258,9 @@ class ProductServiceImplTest {
     void update_shouldThrowCategoryNotFound() {
         UUID existingCategoryId = UUID.randomUUID();
         Category resolvedCategory = Category.builder().id(existingCategoryId).name("Space Food").build();
-        when(categoryService.findById(existingCategoryId)).thenReturn(Optional.of(resolvedCategory));
+        when(categoryService.findCategoryById(existingCategoryId)).thenReturn(Optional.of(resolvedCategory));
 
-        Product created = productService.create(Product.builder()
+        Product created = productService.createProduct(Product.builder()
                 .name("Galaxy Milk")
                 .description("Desc")
                 .price(new BigDecimal("1.00"))
@@ -269,7 +269,7 @@ class ProductServiceImplTest {
                 .build());
 
         UUID missingCategoryId = UUID.randomUUID();
-        when(categoryService.findById(missingCategoryId)).thenReturn(Optional.empty());
+        when(categoryService.findCategoryById(missingCategoryId)).thenReturn(Optional.empty());
 
         Product updateDraft = Product.builder()
                 .name("Galaxy Milk Updated")
@@ -279,12 +279,12 @@ class ProductServiceImplTest {
                 .available(true)
                 .build();
 
-        assertThatThrownBy(() -> productService.update(created.getId(), updateDraft))
+        assertThatThrownBy(() -> productService.updateProduct(created.getId(), updateDraft))
                 .isInstanceOf(CategoryNotFoundException.class)
                 .hasMessage(String.format(NotFoundException.ID_NOT_FOUND_TEMPLATE, "Category", missingCategoryId));
 
-        verify(categoryService, times(1)).findById(existingCategoryId);
-        verify(categoryService, times(1)).findById(missingCategoryId);
+        verify(categoryService, times(1)).findCategoryById(existingCategoryId);
+        verify(categoryService, times(1)).findCategoryById(missingCategoryId);
         verifyNoMoreInteractions(categoryService);
     }
 
@@ -293,9 +293,9 @@ class ProductServiceImplTest {
     void deleteById_shouldBeIdempotent() {
         UUID categoryId = UUID.randomUUID();
         Category resolvedCategory = Category.builder().id(categoryId).name("Space Food").build();
-        when(categoryService.findById(categoryId)).thenReturn(Optional.of(resolvedCategory));
+        when(categoryService.findCategoryById(categoryId)).thenReturn(Optional.of(resolvedCategory));
 
-        Product created = productService.create(Product.builder()
+        Product created = productService.createProduct(Product.builder()
                 .name("Nebula Snack")
                 .description("Snack")
                 .price(new BigDecimal("3.00"))
@@ -303,14 +303,14 @@ class ProductServiceImplTest {
                 .available(true)
                 .build());
 
-        assertThatCode(() -> productService.deleteById(created.getId())).doesNotThrowAnyException();
-        assertThatThrownBy(() -> productService.getById(created.getId()))
+        assertThatCode(() -> productService.deleteProductById(created.getId())).doesNotThrowAnyException();
+        assertThatThrownBy(() -> productService.getProductById(created.getId()))
                 .isInstanceOf(ProductNotFoundException.class);
 
-        assertThatCode(() -> productService.deleteById(created.getId())).doesNotThrowAnyException();
-        assertThatCode(() -> productService.deleteById(UUID.randomUUID())).doesNotThrowAnyException();
+        assertThatCode(() -> productService.deleteProductById(created.getId())).doesNotThrowAnyException();
+        assertThatCode(() -> productService.deleteProductById(UUID.randomUUID())).doesNotThrowAnyException();
 
-        verify(categoryService, times(1)).findById(categoryId);
+        verify(categoryService, times(1)).findCategoryById(categoryId);
         verifyNoMoreInteractions(categoryService);
     }
 }
