@@ -6,7 +6,7 @@ servers:
   - url: http://localhost:8080
 
 paths:
-  /api/products:
+  /api/v1/products:
     get:
       tags: [Products]
       operationId: listProducts
@@ -46,7 +46,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
 
-  /api/products/{id}:
+  /api/v1/products/{id}:
     get:
       tags: [Products]
       operationId: getProductById
@@ -121,7 +121,7 @@ paths:
         "204":
           description: No Content
 
-  /api/categories:
+  /api/v1/categories:
     get:
       tags: [Categories]
       operationId: listCategories
@@ -156,7 +156,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
 
-  /api/categories/{id}:
+  /api/v1/categories/{id}:
     delete:
       tags: [Categories]
       operationId: deleteCategory

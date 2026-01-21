@@ -3,6 +3,4 @@ server:
 
 springdoc:
   swagger-ui:
-    path: /swagger-ui.html
-  api-docs:
-    path: /v3/api-docs
+    url: /api-specs/market-api-spec.yml

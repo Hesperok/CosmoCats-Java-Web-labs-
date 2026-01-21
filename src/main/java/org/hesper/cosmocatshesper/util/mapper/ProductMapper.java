@@ -22,7 +22,7 @@ public interface ProductMapper {
 
     @Mapping(target = "id", source = "productId")
     @Mapping(target = "category", expression = "java(mapCategoryIdToCategoryReference(dto.getCategoryId()))")
-    @Mapping(target = "available", source = "available")
+    @Mapping(target = "available", source = "dto.available")
     Product mapUpsertRequestDtoToProductUpdateDraft(UUID productId, ProductUpsertRequestDto dto);
 
     @Mapping(target = "categoryId", expression = "java(product.getCategory().getId())")
