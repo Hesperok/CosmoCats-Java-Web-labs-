@@ -8,7 +8,4 @@ public class CategoryNotFoundException extends NotFoundException {
         super("Category", id);
     }
 
-    public CategoryNotFoundException(String message) {
-        super(message);
-    }
 }

@@ -42,22 +42,6 @@ public class GlobalExceptionHandler {
         return pd;
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ProblemDetail handleConstraintViolation(ConstraintViolationException ex, HttpServletRequest request) {
-        List<FieldViolation> violations = ex.getConstraintViolations()
-                .stream()
-                .map(v -> new FieldViolation(String.valueOf(v.getPropertyPath()), v.getMessage()))
-                .toList();
-
-        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed");
-        pd.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
-        pd.setType(URI.create("about:blank"));
-        pd.setInstance(URI.create(request.getRequestURI()));
-        pd.setProperty("path", request.getRequestURI());
-        pd.setProperty("errors", violations);
-        return pd;
-    }
-
     private FieldViolation toFieldViolation(FieldError fieldError) {
         return new FieldViolation(fieldError.getField(), fieldError.getDefaultMessage());
     }

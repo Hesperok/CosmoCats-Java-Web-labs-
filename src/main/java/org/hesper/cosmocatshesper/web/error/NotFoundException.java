@@ -10,7 +10,4 @@ public abstract class NotFoundException extends RuntimeException {
         super(String.format(ID_NOT_FOUND_TEMPLATE, objectType, id));
     }
 
-    protected NotFoundException(String message) {
-        super(message);
-    }
 }

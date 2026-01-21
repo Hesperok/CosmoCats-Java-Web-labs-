@@ -8,7 +8,4 @@ public class ProductNotFoundException extends NotFoundException {
         super("Product", id);
     }
 
-    public ProductNotFoundException(String message) {
-        super(message);
-    }
 }
