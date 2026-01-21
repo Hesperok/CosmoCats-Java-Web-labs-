@@ -34,4 +34,8 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategoryById(UUID id) {
         storage.remove(id);
     }
+
+    void clearStorage() {
+        storage.clear();
+    }
 }
